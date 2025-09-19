@@ -13,15 +13,6 @@ const (
 	riskAuthorizersLimit = 5
 )
 
-type AuthorizerRepository interface {
-	InsertAuthorizer(authorizer entities.Authorizer) (uuid.UUID, error)
-	CountByCardSince(cardNumber string, sinceTime int64) int
-}
-
-type RiskRepository interface {
-	InsertRisk(risks entities.Risk)
-}
-
 type AuthorizerUC struct {
 	authorizerRepo AuthorizerRepository
 	riskRepo       RiskRepository
