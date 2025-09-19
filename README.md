@@ -30,21 +30,21 @@ operações válidas sejam registradas e que os clientes sejam notificados imedi
 
 ```json
 {
-    "card_number": "4111111111111111",
-    "amount": 100.50,
-    "currency": "USD",
-    "merchant": "Amazon",
-    "timestamp": "2025-01-17T10:00:00Z"
+  "card_number": "4111111111111111",
+  "amount": 100.50,
+  "currency": "USD",
+  "merchant": "Amazon",
+  "timestamp": "2025-01-17T10:00:00Z"
 }
 ```
 
 2. **Validações:**
 
 - O timestamp deve ser válido e não pode estar no futuro e deve ser informado do formado RFC-3339.
-    - Mensagem de Erro se não for RFC-3339: `timestamp not valid`
-    - Mensagem de Erro se depois de hoje: `timestamp on the future`
+  - Mensagem de Erro se não for RFC-3339: `timestamp not valid`
+  - Mensagem de Erro se depois de hoje: `timestamp on the future`
 - Para qualquer outro erro:
-    - Mensagem de Erro: `invalid payload`
+  - Mensagem de Erro: `invalid payload`
 
 3. **Registro da Transação:**
 
@@ -57,8 +57,8 @@ operações válidas sejam registradas e que os clientes sejam notificados imedi
 
 ```json
 {
-	"status": "approved",
-	"authorize_id": "123e4567-e89b-12d3-a456-426614174000"
+  "status": "approved",
+  "authorize_id": "123e4567-e89b-12d3-a456-426614174000"
 }
 ```
 
@@ -66,8 +66,8 @@ operações válidas sejam registradas e que os clientes sejam notificados imedi
 
 ```json
 {
-	"status": "rejected",
-	"error": "invalid payload"
+  "status": "rejected",
+  "error": "invalid payload"
 }
 ```
 
@@ -85,19 +85,19 @@ para a equipe de monitoramento.
 
 ### Novos Requisitos
 
-1. **Detecção de Transações Suspeitas**
+1. **Deteção de Transações Suspeitas**
 
 - Implemente uma validação adicional que marque transações como "suspeitas" com base nas seguintes condições:
-    - Transações muito altas: Qualquer transação acima de **$10,000** deve ser marcada como suspeita: *high amount*
-    - Compras fora do padrão: Se o mesmo número de cartão realizar mais de 5 transações em menos de 1 minuto, as
-      transações adicionais devem ser marcadas como suspeitas. *not ‘standard’*
+  - Transações muito altas: Qualquer transação acima de **$10,000** deve ser marcada como suspeita: *high amount*
+  - Compras fora do padrão: Se o mesmo número de cartão realizar mais de 5 transações em menos de 1 minuto, as
+    transações adicionais devem ser marcadas como suspeitas. *not ‘standard’*
 
 2. **Alteração na Resposta**
 
 - Para transações suspeitas:
-    - As transações ainda devem ser aprovadas, mas com um aviso.
-    - A resposta deve incluir um campo indicando o status de "suspeita".
-    - Exemplo de resposta:
+  - As transações ainda devem ser aprovadas, mas com um aviso.
+  - A resposta deve incluir um campo indicando o status de "suspeita".
+  - Exemplo de resposta:
 
 ```json
 {
@@ -131,8 +131,8 @@ A equipe identificou dois grandes desafios:
 
 - Foi identificado que não precisa armazenar todas as transações, somente as últimas 10.000 transações.
 - Substitua o armazenamento das transações válidas de memória por um ‘buffer’ cíclico (circular ‘buffer’):
-    - O ‘buffer’ deve armazenar até 10.000 transações.
-    - Quando o limite for atingido, sobrescreva as transações mais antigas.
+  - O ‘buffer’ deve armazenar até 10.000 transações.
+  - Quando o limite for atingido, sobrescreva as transações mais antigas.
 
 2. **Fila de Processamento Assíncrona**
 
@@ -144,8 +144,8 @@ A equipe identificou dois grandes desafios:
 
 - A fila de trabalho deve ter um limite de tamanho (‘default’: 1000 transações).
 - Quando a fila estiver cheia:
-    - O sistema deve retornar um erro ("Too Many Requests") para novas transações.
-    - Exemplo de resposta:
+  - O sistema deve retornar um erro ("Too Many Requests") para novas transações.
+  - Exemplo de resposta:
 
 ```json
 {
@@ -157,11 +157,11 @@ A equipe identificou dois grandes desafios:
 4. **Monitoramento de Performance**
 
 - Adicione uma função para expor as seguintes métricas:
-    - Número de transações processadas.
-    - Número de transações rejeitadas (fila cheia).
-    - Uso atual da fila (número de transações pendentes).
-    - Número de workers ativos.
-      Exemplo de resposta:
+  - Número de transações processadas.
+  - Número de transações rejeitadas (fila cheia).
+  - Uso atual da fila (número de transações pendentes).
+  - Número de workers ativos.
+    Exemplo de resposta:
 
 ```json
 {
