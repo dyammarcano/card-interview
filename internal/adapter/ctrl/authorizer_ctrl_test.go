@@ -2,12 +2,13 @@ package ctrl
 
 import (
 	"encoding/json"
+	"testing"
+	"time"
+
 	"stone/cards/authorizer/internal/adapter/ctrl/schema"
 	"stone/cards/authorizer/internal/adapter/db"
 	"stone/cards/authorizer/internal/domain/authorizer"
 	"stone/cards/authorizer/internal/domain/entities"
-	"testing"
-	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -89,7 +90,6 @@ func TestAuthorizerCtrlEx1(t *testing.T) {
 			tt.assertFn(t, tt.init().Authorize([]byte(tt.payload)))
 		})
 	}
-
 }
 
 func TestAuthorizerCtrlEx2(t *testing.T) {
@@ -171,7 +171,7 @@ func TestAuthorizerCtrlEx2(t *testing.T) {
 			init: func() AuthorizerCtrl {
 				authRepo := db.NewAuthorizerRepository()
 				for i := 0; i < 10; i++ {
-					authRepo.InsertAuthorizer(entities.Authorizer{
+					_, _ = authRepo.InsertAuthorizer(entities.Authorizer{
 						CardNumber: "4111111111111111",
 						Amount:     100.50,
 						Currency:   "USD",
@@ -206,5 +206,4 @@ func TestAuthorizerCtrlEx2(t *testing.T) {
 			tt.assertFn(t, tt.init().Authorize([]byte(tt.payload)))
 		})
 	}
-
 }
